@@ -1,6 +1,6 @@
 {
   "name": "sdvx-mdb-tools",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Tools for working with SDVX music database",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -17,11 +17,11 @@
   "author": "Hoshikara",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^22.1.0",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4"
   },
   "dependencies": {
-    "@types/node": "^22.1.0",
     "fast-xml-parser": "^4.4.1",
     "iconv-lite": "^0.6.3"
   }

@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 import { XMLParser } from "fast-xml-parser";
 import { decode } from "iconv-lite";
-import { MDBEntry } from "./types";
+import { MDBChart, MDBEntry } from "./types";
 
 type MDB = {
   "?xml": {
@@ -57,6 +57,8 @@ const CHAR_REBINDS: Record<string, string> = {
   蔕: "ũ",
 };
 
+const DIFF_KEYS = ["novice", "advanced", "exhaust", "infinite", "maximum"];
+
 export function parseDb(path: string): MDBEntry[] {
   const parser = new XMLParser({ ignoreAttributes: false });
   const sjisContent = readFileSync(path);
@@ -64,6 +66,12 @@ export function parseDb(path: string): MDBEntry[] {
   const xml = parser.parse(utf8Content) as MDB;
 
   return xml.mdb.music;
+}
+
+export function getCharts(entry: MDBEntry): MDBChart[] {
+  return DIFF_KEYS.map(
+    (key) => entry.difficulty[key as keyof MDBEntry["difficulty"]]
+  );
 }
 
 export function fixString(string: string): string {
