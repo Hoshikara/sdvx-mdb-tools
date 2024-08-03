@@ -1,7 +1,8 @@
 import { readFileSync } from "fs";
 import { XMLParser } from "fast-xml-parser";
 import { decode } from "iconv-lite";
-import { MDBChart, MDBEntry } from "./types";
+import { fixString } from "./utils";
+import { MDBChart, MDBEntry, Song } from "./types";
 
 type MDB = {
   "?xml": {
@@ -13,53 +14,55 @@ type MDB = {
   };
 };
 
-const CHAR_REBINDS: Record<string, string> = {
-  "‾": "~",
-  "〜": "～",
-  䧺: "ê",
-  彜: "ū",
-  曦: "à",
-  曩: "è",
-  躔: "🐾",
-  騫: "á",
-  驩: "Ø",
-  驫: "ā",
-  驪: "ō",
-  骭: "ü",
-  鬯: "ī",
-  黷: "ē",
-  齣: "Ú",
-  齧: "Ä",
-  霻: "♠",
-  齪: "♣",
-  鑈: "♦",
-  齲: "♥",
-  齶: "♡",
-  齷: "é",
-  罇: "ê",
-  隍: "Ü",
-  趁: "Ǣ",
-  鬮: "¡",
-  雋: "Ǜ",
-  魄: "♃",
-  鬥: "Ã",
-  鬆: "Ý",
-  龕: "€",
-  鹹: "Ĥ",
-  煢: "ø",
-  闃: "Ā",
-  盥: "⚙",
-  墸: "͟͟͞ ",
-  饌: "²",
-  餮: "Ƶ",
-  鑷: "ゔ",
-  釁: "🍄",
-  蔕: "ũ",
-};
-
 const DIFF_KEYS = ["novice", "advanced", "exhaust", "infinite", "maximum"];
 
-export function parseDb(path: string): MDBEntry[] {
+export function parseDb(path: string) {
+  const parser = new XMLParser({ ignoreAttributes: false });
+  const sjisContent = readFileSync(path);
+  const utf8Content = decode(sjisContent, "shift-jis");
+  const xml = parser.parse(utf8Content) as MDB;
+  const songs = [] as Song[];
+
+  for (const entry of xml.mdb.music) {
+    const difficulties = DIFF_KEYS.map((key) => {
+      const chart = entry.difficulty[key as keyof MDBEntry["difficulty"]];
+
+      return {
+        effector: chart.effected_by,
+        illustrator: chart.illustrator,
+        level: Number(chart.difnum["#text"]),
+        name: String(key),
+        radar: {
+          notes: chart.radar?.notes?.["#text"] ?? 0,
+          peak: chart.radar?.peak?.["#text"] ?? 0,
+          tsumami: chart.radar?.tsumami?.["#text"] ?? 0,
+          tricky: chart.radar?.tricky?.["#text"] ?? 0,
+          hand_trip: chart.radar?.["hand-trip"]?.["#text"] ?? 0,
+          one_hand: chart.radar?.["one-hand"]?.["#text"] ?? 0,
+        },
+      };
+    });
+
+    songs.push({
+      id: Number(entry["@_id"]),
+      title: fixString(entry.info.title_name),
+      title_yomigana: String(entry.info.title_yomigana),
+      artist: fixString(entry.info.artist_name),
+      artist_yomigana: String(entry.info.artist_yomigana),
+      bpm_min: entry.info.bpm_min["#text"] / 100,
+      bpm_max: entry.info.bpm_max["#text"] / 100,
+      distribution_date: entry.info.distribution_date["#text"],
+      inf_ver: entry.info.inf_ver["#text"],
+      ascii: String(entry.info.ascii),
+      version: entry.info.version["#text"],
+      difficulties,
+    });
+  }
+
+  return songs;
+}
+
+export function parseDbRaw(path: string): MDBEntry[] {
   const parser = new XMLParser({ ignoreAttributes: false });
   const sjisContent = readFileSync(path);
   const utf8Content = decode(sjisContent, "shift-jis");
@@ -72,11 +75,4 @@ export function getCharts(entry: MDBEntry): MDBChart[] {
   return DIFF_KEYS.map(
     (key) => entry.difficulty[key as keyof MDBEntry["difficulty"]]
   );
-}
-
-export function fixString(string: string): string {
-  return string
-    .split("")
-    .map((c) => CHAR_REBINDS[c] ?? c)
-    .join("");
 }
