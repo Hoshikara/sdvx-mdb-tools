@@ -24,24 +24,28 @@ export function parseDb(path: string) {
   const songs = [] as Song[];
 
   for (const entry of xml.mdb.music) {
-    const difficulties = DIFF_KEYS.map((key) => {
+    const difficulties = [] as Song["difficulties"];
+
+    for (const key of DIFF_KEYS) {
       const chart = entry.difficulty[key as keyof MDBEntry["difficulty"]];
 
-      return {
-        effector: chart.effected_by,
-        illustrator: chart.illustrator,
-        level: Number(chart.difnum["#text"]),
-        name: String(key),
-        radar: {
-          notes: chart.radar?.notes?.["#text"] ?? 0,
-          peak: chart.radar?.peak?.["#text"] ?? 0,
-          tsumami: chart.radar?.tsumami?.["#text"] ?? 0,
-          tricky: chart.radar?.tricky?.["#text"] ?? 0,
-          hand_trip: chart.radar?.["hand-trip"]?.["#text"] ?? 0,
-          one_hand: chart.radar?.["one-hand"]?.["#text"] ?? 0,
-        },
-      };
-    });
+      if (chart) {
+        difficulties.push({
+          effector: chart.effected_by,
+          illustrator: chart.illustrator,
+          level: Number(chart.difnum["#text"]),
+          name: String(key),
+          radar: {
+            notes: chart.radar?.notes?.["#text"] ?? 0,
+            peak: chart.radar?.peak?.["#text"] ?? 0,
+            tsumami: chart.radar?.tsumami?.["#text"] ?? 0,
+            tricky: chart.radar?.tricky?.["#text"] ?? 0,
+            hand_trip: chart.radar?.["hand-trip"]?.["#text"] ?? 0,
+            one_hand: chart.radar?.["one-hand"]?.["#text"] ?? 0,
+          },
+        });
+      }
+    }
 
     songs.push({
       id: Number(entry["@_id"]),
