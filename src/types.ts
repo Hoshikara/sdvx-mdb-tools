@@ -6,6 +6,7 @@ export type MDBChart = {
   difnum: XMLText<number>;
   illustrator: string;
   effected_by: string;
+  max_exscore: XMLText<number>;
   radar: {
     notes: XMLText<number>;
     peak: XMLText<number>;
@@ -45,6 +46,7 @@ export type Difficulty = {
   illustrator: string;
   level: number;
   name: string;
+  exScore: number;
   radar: {
     notes: number;
     peak: number;

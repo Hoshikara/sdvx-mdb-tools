@@ -35,6 +35,7 @@ export function parseDb(path: string) {
           illustrator: chart.illustrator,
           level: Number(chart.difnum["#text"]),
           name: String(key),
+          exScore: Number(chart.max_exscore["#text"]),
           radar: {
             notes: chart.radar?.notes?.["#text"] ?? 0,
             peak: chart.radar?.peak?.["#text"] ?? 0,
