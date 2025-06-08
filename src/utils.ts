@@ -43,6 +43,7 @@ const CHAR_REBINDS: Record<string, string> = {
   頽: "ä",
   瑟: "ō",
   瀑: "À",
+  黻: "*",
 };
 
 export function fixString(input: string | number): string {
