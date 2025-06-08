@@ -41,6 +41,8 @@ const CHAR_REBINDS: Record<string, string> = {
   釁: "🍄",
   蔕: "ũ",
   頽: "ä",
+  瑟: "ō",
+  瀑: "À",
 };
 
 export function fixString(input: string | number): string {
