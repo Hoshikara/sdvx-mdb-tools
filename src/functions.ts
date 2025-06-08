@@ -31,8 +31,8 @@ export function parseDb(path: string) {
 
       if (chart) {
         difficulties.push({
-          effector: chart.effected_by,
-          illustrator: chart.illustrator,
+          effector: fixString(chart.effected_by),
+          illustrator: fixString(chart.illustrator),
           level: Number(chart.difnum["#text"]),
           name: String(key),
           exScore: Number(chart.max_exscore?.["#text"] ?? 0),
