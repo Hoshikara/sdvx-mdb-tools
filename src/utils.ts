@@ -49,7 +49,6 @@ const CHAR_REBINDS: Record<string, string> = {
 	讎: "ö",
 	鑒: "₩",
   䧺: "ê",
-  驪: "ō",
   齣: "Ú",
   齧: "Ä",
   魄: "♃",
