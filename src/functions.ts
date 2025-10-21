@@ -14,7 +14,7 @@ type MDB = {
   };
 };
 
-const DIFF_KEYS = ["novice", "advanced", "exhaust", "infinite", "maximum"];
+const DIFF_KEYS = ["novice", "advanced", "exhaust", "infinite", "maximum", "ultimate"];
 
 export function parseDb(path: string) {
   const parser = new XMLParser({ ignoreAttributes: false });

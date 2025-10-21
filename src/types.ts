@@ -37,6 +37,7 @@ export type MDBEntry = {
     exhaust: MDBChart;
     infinite: MDBChart;
     maximum: MDBChart;
+		ultimate: MDBChart;
   };
   "@_id": string;
 };
